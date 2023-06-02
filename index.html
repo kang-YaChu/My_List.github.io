@@ -6,6 +6,14 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
+            background-color: #f1f1f156;
+        }
+
+        h1, h2 {
+            color: #4527A0;
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .video-container {
@@ -15,6 +23,20 @@
             align-items: flex-start;
             max-width: 1920px;
             margin: 0 auto;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: scale-in 0.5s ease-out;
+        }
+
+        @keyframes scale-in {
+            0% {
+                transform: scale(0.9);
+            }
+            100% {
+                transform: scale(1);
+            }
         }
 
         .video-card {
@@ -24,12 +46,18 @@
             border: 1px solid #ddd;
             border-radius: 5px;
             padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease-out;
         }
 
         .video-card a {
             display: block;
             text-decoration: none;
             color: inherit;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
         }
 
         .video-title {
@@ -56,14 +84,22 @@
             margin: 5px;
             padding: 5px 10px;
             text-decoration: none;
-            background-color: #eee;
-            color: #333;
-            border-radius: 3px;
+            background-color: #FFD54F;
+            color: #fff;
+            border-radius: 20px;
+            padding: 8px 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.2s ease-out;
         }
 
+        .pagination a:hover {
+            background-color: #FFC107;
+        }
+        
         .pagination a.current {
             background-color: #333;
             color: #fff;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
