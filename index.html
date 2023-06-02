@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YouTube 影片列表</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .video-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .video-card {
+            margin: 10px;
+            width: 180px;
+            text-align: center;
+        }
+
+        .video-card iframe {
+            width: 100%;
+            height: 100px;
+        }
+
+        .video-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .video-time {
+            font-size: 12px;
+            color: gray;
+            margin-top: 5px;
+        }
+
+        .latest-video {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>最新影片</h1>
+    <div id="latest-video" class="latest-video"></div>
+    <h2>所有影片</h2>
+    <div id="video-list" class="video-container"></div>
+
+    <script>
+        // 播放列表的網址
+        var playlistUrl = "https://www.youtube.com/playlist?list=PLBg0Twu-0i2-Kl1XCrrrEDUVJnfIZKGHK";
+
+        // 使用 YouTube Data API 檢索播放列表的影片
+        fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=PLBg0Twu-0i2-Kl1XCrrrEDUVJnfIZKGHK&key=AIzaSyCtG-Mp04ui7f9FdbchfVSGKVxGyh4zXeQ')
+            .then(response => response.json())
+            .then(data => {
+                var latestVideo = data.items[0].snippet.resourceId.videoId;
+                var videos = data.items;
+
+                // 在最上方顯示最新影片
+                var latestVideoElement = document.getElementById('latest-video');
+                var iframe = document.createElement('iframe');
+                iframe.src = 'https://www.youtube.com/embed/' + latestVideo;
+                iframe.width = '560';
+                iframe.height = '315';
+                latestVideoElement.appendChild(iframe);
+
+                // 在下方以5個影片一排的方式列出所有影片
+                var videoListElement = document.getElementById('video-list');
+                var videosHtml = '';
+                for (var i = 1; i < videos.length; i++) {
+                    videosHtml += '<div class="video-card">';
+                    videosHtml += '<iframe src="https://www.youtube.com/embed/' + videos[i].snippet.resourceId.videoId + '" width="360" height="200"></iframe>';
+                    videosHtml += '<div class="video-title">' + videos[i].snippet.title + '</div>';
+                    videosHtml += '<div class="video-time">' + videos[i].snippet.publishedAt + '</div>';
+                    videosHtml += '</div>';
+                }
+                videoListElement.innerHTML = videosHtml;
+            })
+            .catch(error => {
+                console.error('發生錯誤：', error);
+            });
+    </script>
+</body>
+</html>
