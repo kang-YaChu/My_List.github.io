@@ -115,7 +115,7 @@
         var playlistUrl = "https://www.youtube.com/playlist?list=PLBg0Twu-0i2-Kl1XCrrrEDUVJnfIZKGHK";
 
         // 使用 YouTube Data API 檢索播放列表的影片
-        fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=PLBg0Twu-0i2-Kl1XCrrrEDUVJnfIZKGHK&key=AIzaSyCtG-Mp04ui7f9FdbchfVSGKVxGyh4zXeQ')
+        fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=PLBg0Twu-0i2-Kl1XCrrrEDUVJnfIZKGHK&key=AIzaSyAhlPwgRn7-KtHWvX6uGugOruTNDDqQhiY')
             .then(response => response.json())
             .then(data => {
                 var latestVideo = data.items[0].snippet.resourceId.videoId;
