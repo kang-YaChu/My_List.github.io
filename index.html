@@ -5,6 +5,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            text-align: center;
         }
 
         .video-container {
@@ -12,36 +13,57 @@
             flex-wrap: wrap;
             justify-content: center;
             align-items: flex-start;
-            max-width: 960px;
+            max-width: 1920px;
             margin: 0 auto;
         }
 
         .video-card {
-            margin: 10px;
-            width: 180px;
+            margin: 20px;
+            width: calc(20% - 40px);
             text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
         }
 
-        .video-card iframe {
-            width: 100%;
-            height: 100px;
+        .video-card a {
+            display: block;
+            text-decoration: none;
+            color: inherit;
         }
 
         .video-title {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
-            margin-top: 5px;
+            margin-bottom: 5px;
         }
 
         .video-time {
             font-size: 12px;
-            color: gray;
-            margin-top: 5px;
+            color: #888;
         }
 
         .latest-video {
-            text-align: center;
-            margin-bottom: 20px;
+            margin: 0 auto 20px;
+        }
+
+        .pagination {
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            display: inline-block;
+            margin: 5px;
+            padding: 5px 10px;
+            text-decoration: none;
+            background-color: #eee;
+            color: #333;
+            border-radius: 3px;
+        }
+
+        .pagination a.current {
+            background-color: #333;
+            color: #fff;
         }
     </style>
 </head>
@@ -50,6 +72,7 @@
     <div id="latest-video" class="latest-video"></div>
     <h2>所有影片</h2>
     <div id="video-list" class="video-container"></div>
+    <div class="pagination" id="pagination"></div>
 
     <script>
         // 播放列表的網址
@@ -60,27 +83,80 @@
             .then(response => response.json())
             .then(data => {
                 var latestVideo = data.items[0].snippet.resourceId.videoId;
+                var latestVideoTitle = data.items[0].snippet.title;
                 var videos = data.items;
 
                 // 在最上方顯示最新影片
                 var latestVideoElement = document.getElementById('latest-video');
                 var iframe = document.createElement('iframe');
                 iframe.src = 'https://www.youtube.com/embed/' + latestVideo;
-                iframe.width = '560';
-                iframe.height = '315';
+                iframe.width = '854';
+                iframe.height = '480';
                 latestVideoElement.appendChild(iframe);
 
-                // 在下方以5個影片一排的方式列出所有影片
-                var videoListElement = document.getElementById('video-list');
-                var videosHtml = '';
-                for (var i = 1; i < videos.length; i++) {
-                    videosHtml += '<div class="video-card">';
-                    videosHtml += '<iframe src="https://www.youtube.com/embed/' + videos[i].snippet.resourceId.videoId + '" width="360" height="200"></iframe>';
-                    videosHtml += '<div class="video-title">' + videos[i].snippet.title + '</div>';
-                    videosHtml += '<div class="video-time">' + videos[i].snippet.publishedAt + '</div>';
-                    videosHtml += '</div>';
+                // 顯示最新影片的標題
+                var latestVideoTitleElement = document.createElement('div');
+                latestVideoTitleElement.className = 'video-title';
+                latestVideoTitleElement.textContent = latestVideoTitle;
+                latestVideoElement.appendChild(latestVideoTitleElement);
+
+                // 分頁功能
+
+                var itemsPerPage = 20;
+                var currentPage = 1;
+                var totalVideos = videos.length - 1;
+                var totalPages = Math.ceil(totalVideos / itemsPerPage);
+
+                function renderVideoList(page) {
+                    var startIndex = (page - 1) * itemsPerPage + 1;
+                    var endIndex = Math.min(startIndex + itemsPerPage - 1, totalVideos);
+
+                    var videoListElement = document.getElementById('video-list');
+                    videoListElement.innerHTML = '';
+
+                    for (var i = startIndex; i <= endIndex; i++) {
+                        var video = videos[i];
+                        var videoCard = document.createElement('div');
+                        videoCard.className = 'video-card';
+
+                        var videoLink = document.createElement('a');
+                        videoLink.href = 'https://www.youtube.com/watch?v=' + video.snippet.resourceId.videoId;
+                        videoLink.target = '_blank';
+
+                        var videoTitle = document.createElement('div');
+                        videoTitle.className = 'video-title';
+                        videoTitle.textContent = video.snippet.title;
+
+                        videoLink.appendChild(videoTitle);
+                        videoCard.appendChild(videoLink);
+                        videoListElement.appendChild(videoCard);
+                    }
                 }
-                videoListElement.innerHTML = videosHtml;
+
+                function renderPagination() {
+                    var paginationElement = document.getElementById('pagination');
+                    paginationElement.innerHTML = '';
+
+                    for (var i = 1; i <= totalPages; i++) {
+                        var paginationLink = document.createElement('a');
+                        paginationLink.href = '#';
+                        paginationLink.textContent = i;
+                        if (i === currentPage) {
+                            paginationLink.className = 'current';
+                        } else {
+                            paginationLink.addEventListener('click', function () {
+                                currentPage = parseInt(this.textContent);
+                                renderVideoList(currentPage);
+                                renderPagination();
+                            });
+                        }
+
+                        paginationElement.appendChild(paginationLink);
+                    }
+                }
+
+                renderVideoList(currentPage);
+                renderPagination();
             })
             .catch(error => {
                 console.error('發生錯誤：', error);
